@@ -11,9 +11,13 @@ $hierarchy[] = [
                     'subordinates' => [
                         [
                             'role_name' => 'Salesman',
-                            'subordinates' => []
+                            'subordinates' => [
+                                [
+                                    'role_name' => 'Salesman',
+                                    'subordinates' => []
+                                ]
+                            ]
                         ],
-
                     ]
                 ],
             ]
