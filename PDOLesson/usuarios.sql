@@ -1,0 +1,2 @@
+CREATE TABLE `usuarios` (`id` int(11) NOT NULL AUTO_INCREMENT, `nome` varchar(60) NOT NULL, `login` varchar(30) NOT NULL, `idade` tinyint(4) NOT NULL, `sexo` char(3) NOT NULL, `email` varchar(60) NOT NULL, `senha` varchar(100) NOT NULL, PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+INSERT INTO `usuarios` (`nome`,`login`,`idade`,`sexo`,`email`,`senha`) VALUES ('Marianes','marimar',20,'fem','email@mariana.com','123456');
