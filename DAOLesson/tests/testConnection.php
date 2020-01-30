@@ -8,7 +8,8 @@ class testConnection extends TestCase
      * Tests if the database connection is working properly
      * @test
      */
-    public function givenNewObjectWhenInstancesItThenConstructs(){
+    public function givenNewObjectWhenInstancesItThenConstructs()
+    {
         $this->assertIsObject(new UserDAO());
     }
 
@@ -16,7 +17,8 @@ class testConnection extends TestCase
      * Tests if the database search is working properly
      * @test
      */
-    public function givenSelectQueryWhenSearchsInDatabaseTheReturnsAValue(){
+    public function givenSelectQueryWhenSearchsInDatabaseTheReturnsAValue()
+    {
         $users = new UserDAO();
         $query = "SELECT * FROM usuarios WHERE id = 1";
         $expected[] = [
