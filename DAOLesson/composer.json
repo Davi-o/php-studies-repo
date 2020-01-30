@@ -1,0 +1,25 @@
+{
+  "name": "odawi/studies",
+  "description": "",
+  "type": "project",
+  "require": {
+    "phpunit/phpunit": "^8.2",
+    "components/jquery": "^3.3",
+    "ext-json": "*",
+    "ext-mysqli": "*",
+    "ext-pdo": "*"
+  },
+  "require-dev": {
+    "phpdocumentor/phpdocumentor": "^2.9"
+  },
+  "minimum-stability": "dev",
+  "autoload":  {
+    "DatabaseDAO\\": "database_dao/"
+  },
+  "authors": [
+    {
+      "name": "Davi Alves",
+      "email": "alvesdelima.davi@gmail.com"
+    }
+  ]
+}
