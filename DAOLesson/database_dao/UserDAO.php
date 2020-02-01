@@ -52,7 +52,7 @@ class UserDAO extends \PDO
     }
 
     /**
-     * Does a search in the database, based on the qyery
+     * Does a search in the database, based on the query
      * @param string $query expects the rawSql
      * @param array $params expects the parameters to the query
      * @return array
