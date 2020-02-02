@@ -29,7 +29,7 @@ class testConnection extends TestCase
      * Tests if the database search is working properly
      * @test
      */
-    public function givenSelectQueryWhenSearchsInDatabaseThenReturnsExpectedValue()
+    public function givenSelectQueryWhenRunsFindUserByIdThenReturnsExpectedValue()
     {
        $userData = [
             "id" => 1,
@@ -52,7 +52,7 @@ class testConnection extends TestCase
      */
     public function givenCallFunctionFindAllUsersWhenRunsItThenReturnsArray()
     {
-        $this->assertIsArray(UserController::findAllUsers());
+        $this->assertIsArray(UserController::search([]));
     }
 
     /**
@@ -93,12 +93,12 @@ class testConnection extends TestCase
     public function testCreateNewUser()
     {
         $userData = [
-            "nome" => "Daniel Paladino",
-            "login" => "danipad",
+            "nome" => "Marcelinho Vidal",
+            "login" => "vidal",
             "idade" => 20,
             "sexo" => "mas",
-            "email" => "palada@mail.com",
-            "senha" => "555666"
+            "email" => "vidal@mail.com",
+            "senha" => "1641"
         ];
 
         $newId = UserController::search(
@@ -120,5 +120,42 @@ class testConnection extends TestCase
         $userController = new UserController();
 
         $this->assertEquals($expectedUser, $userController->createNewUser($userData));
+    }
+
+    /**
+     * Tests if the update method works properly
+     * @test
+     */
+    public function testUpdateUser()
+    {
+        $userData = [
+            'id' => 10,
+            'nome' => 'Pedro',
+            'login' => 'pedrini',
+            'idade' => 15,
+            "sexo" => "mas",
+            "email" => "pedron@mail.com",
+            'senha' => '12345x'
+        ];
+
+        $expectedUser = new User($userData);
+
+        $options = [
+            'columns' => [
+                'nome' => 'Pedro',
+                'login' => 'pedrini',
+                'senha' => '12345x',
+                'idade' => 15,
+                'email' => 'pedron@mail.com'
+            ],
+            'where' => [
+                'id' => 10
+            ]
+        ];
+
+        $userController = new UserController();
+        $userController->updateUser($options);
+
+        $this->assertEquals($expectedUser, UserController::findUserById(10));
     }
 }

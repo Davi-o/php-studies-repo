@@ -16,15 +16,43 @@ class UserController
         "senha"
     ];
 
+    /** @var array Defines the basics commands for the queries */
+    private const SQL_DML_COMMANDS = [
+        'UPDATE',
+        'DELETE'
+    ];
+
     public function __construct()
     {
+    }
+
+    /**
+     * @param $options
+     */
+    public function updateUser($options)
+    {
+        $userDao = new UserDAO();
+        $options+=['type'=> 'update'];
+        $query = self::formatQuery($options);
+        $userDao->query($query);
+    }
+
+    /**
+     * @param $options
+     */
+    public function deleteUser($options)
+    {
+        $userDao = new UserDAO();
+        $options+=['type'=> 'delete'];
+        $query = self::formatQuery($options);
+        $userDao->query($query);
     }
 
     /**
      * @param $userData array
      * @return array Returns the last inserted row int the database
      */
-    public function createNewUser($userData)
+    public function createNewUser(array $userData)
     {
         $user = new User($userData);
 
@@ -53,21 +81,25 @@ class UserController
 
         return $users;
     }
+
     /**
      * Searches for all the columns of the user table
      *
-     * @param $id User id to be found in the database
+     * @param $id integer id to be found in the database
      * @return User data in the database
      */
-    public static function findUserById($id)
+    public static function findUserById(int $id)
     {
         $userDao = new UserDAO();
 
-        $query = "SELECT * FROM usuarios WHERE id = :ID";
+        $query = [
+            'where' => [
+                'id' => $id
+            ]
+        ];
+        $query = self::formatQuery($query);
 
-        $result = $userDao->select($query, [
-            ":ID" => $id
-        ]);
+        $result = $userDao->select($query);
 
         foreach ($result as $userData){
 
@@ -80,39 +112,26 @@ class UserController
     }
 
     /**
-     * Searches for all the users in the database
-     * @return array With all the users columns
-     */
-    public static function findAllUsers()
-    {
-        $userDao = new UserDAO();
-
-        $query = "SELECT * FROM usuarios";
-
-        $result = $userDao->select($query);
-
-        foreach ($result as $userData){
-
-            if ($userData) {
-                $users[] = new User($userData);
-            }
-        }
-
-        return $users;
-    }
-
-    /**
      * Makes a custom search
      * @param $options array Expects an array with the options of the search,
      * the columns to be searched
      * and the filters to be used
      * @return array
      */
-    public static function search($options)
+    public static function search(array $options)
     {
         $userDao = new UserDAO();
         $query = self::formatQuery($options);
-        return $userDao->select($query);
+
+        $result = $userDao->select($query);
+
+        foreach ($result as $userData){
+
+            if ($userData) {
+                $user[] = new User($userData);
+            }
+        }
+        return $user;
     }
 
     /**
@@ -141,21 +160,43 @@ class UserController
      * @param $options array $options['columns'] and $options['where']
      * @return bool|string
      */
-    private function formatQuery($options)
+    private function formatQuery(array $options)
     {
-        $query = "SELECT ";
+        $query = 'SELECT ';
+
+        if (
+            isset($options['type'])
+            && in_array(
+                $options['type'],
+                array_map("strtolower",self::SQL_DML_COMMANDS)
+            )
+        ) {
+            switch ($options['type']){
+                case $options['type'] == "delete" && isset($options['where']):
+                    $query = 'DELETE FROM usuarios ';
+                    break;
+                case $options['type'] == 'update':
+                    $query = 'UPDATE usuarios SET ';
+                    break;
+                default:
+                    break;
+            }
+        }
 
         if (isset($options['columns']) && count($options['columns']) > 0) {
             $iterator = 1;
 
-            foreach ($options['columns'] as $index => $column) {
-                if (in_array($column, self::USER_COLUMNS)) {
+            foreach ($options['columns'] as $columnName => $columnValue) {
+                if (in_array($columnName, self::USER_COLUMNS)) {
                     if ($iterator == 1) {
-                        $query .= "{$column}";
-                    } elseif ($index == array_key_last($options['columns'])) {
-                        $query .= ", {$column} ";
+                        $query .= ($options['type'] == 'update') ? "{$columnName} = '{$columnValue}'" : "{$columnName}";
+
+                    } elseif ($columnName == array_key_last($options['columns'])) {
+                        $query .= ($options['type'] == 'update') ? ", {$columnName} = '{$columnValue}' " : ", {$columnName} ";
+
                     } else {
-                        $query .= ", {$column},";
+                        $query .= ($options['type'] == 'update') ? ", {$columnName} = '{$columnValue}'" : ", {$columnName},";
+
                     }
                     $iterator = 2;
                 }
@@ -165,7 +206,7 @@ class UserController
         }
 
         $iterator = 1;
-        $query .= " FROM usuarios ";
+        $query .= isset($options['type']) ? '' : " FROM usuarios ";
 
         if (isset($options['where'])) {
             foreach ($options['where'] as $columnName => $searchValue) {
