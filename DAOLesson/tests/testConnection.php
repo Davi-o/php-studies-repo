@@ -17,14 +17,21 @@ class testConnection extends TestCase
     }
 
     /**
+     * Tests if User class can be instantiated with empty parameters
+     * @test
+     */
+    public function givenNoParameterToUserClassConstructorWhenInstantiateItThenDontReturnError()
+    {
+        $this->assertIsObject(new User());
+    }
+
+    /**
      * Tests if the database search is working properly
      * @test
      */
     public function givenSelectQueryWhenSearchsInDatabaseThenReturnsExpectedValue()
     {
-        $userController = new UserController();
-
-        $userData = [
+       $userData = [
             "id" => 1,
             "nome" => "Marianes",
             "login" => "marimar",
@@ -36,14 +43,46 @@ class testConnection extends TestCase
 
         $expectedUser = new User($userData);
 
-        $this->assertEquals($expectedUser, $userController->findAllUserById(1));
+        $this->assertEquals($expectedUser, UserController::findUserById(1));
     }
 
     /**
+     * Tests if the database search is working properly
      * @test
      */
-    public function givenNoParameterToUserClassConstructorWhenInstantiateItThenDontReturnError()
+    public function givenCallFunctionFindAllUsersWhenRunsItThenReturnsArray()
     {
-        $this->assertIsObject(new User());
+        $this->assertIsArray(UserController::findAllUsers());
     }
+
+    /**
+     * Tests if the search occurs correctly
+     */
+    public function testFunctionUserControllerSearch()
+    {
+        $this->assertIsArray(
+            UserController::search([
+                'columns' => [
+                    'id',
+                    'nome',
+                    'idade'
+                ],
+                'where' => [
+                    'id' => 1,
+                    'nome' => 'Marianes'
+                ]
+            ])
+        );
+    }
+
+    /**
+     * Tests if the login function is working
+     */
+    public function testDoLogin()
+    {
+        $userController = new UserController();
+        $this->assertTrue($userController->doLogin('marimar', '123456'));
+    }
+
+
 }
