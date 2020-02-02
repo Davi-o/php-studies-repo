@@ -57,6 +57,7 @@ class testConnection extends TestCase
 
     /**
      * Tests if the search occurs correctly
+     * @test
      */
     public function testFunctionUserControllerSearch()
     {
@@ -77,6 +78,7 @@ class testConnection extends TestCase
 
     /**
      * Tests if the login function is working
+     * @test
      */
     public function testDoLogin()
     {
@@ -84,5 +86,39 @@ class testConnection extends TestCase
         $this->assertTrue($userController->doLogin('marimar', '123456'));
     }
 
+    /**
+     * Tests if the method CreateNewUser works properly
+     * @test
+     */
+    public function testCreateNewUser()
+    {
+        $userData = [
+            "nome" => "Daniel Paladino",
+            "login" => "danipad",
+            "idade" => 20,
+            "sexo" => "mas",
+            "email" => "palada@mail.com",
+            "senha" => "555666"
+        ];
 
+        $newId = UserController::search(
+            [
+                'columns' => [
+                    'max(id)'
+                ]
+            ]
+        );
+
+        $newId = $newId[0]['max(id)'] + 1;
+
+        $expectedUser[] = new User(
+            $userData += [
+                'id' => $newId
+            ]
+        );
+
+        $userController = new UserController();
+
+        $this->assertEquals($expectedUser, $userController->createNewUser($userData));
+    }
 }

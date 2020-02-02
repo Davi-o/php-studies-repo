@@ -18,10 +18,11 @@ class User
     public function __construct($userData = null)
     {
         if ($userData) {
-            $this->id = $userData['id'];
+            $this->id = !isset($userData['id']) ?: $userData['id'];
             $this->name = $userData['nome'];
             $this->login = $userData['login'];
             $this->age = $userData['idade'];
+            $this->sex = $userData['sexo'];
             $this->mail = $userData['email'];
             $this->password = $userData['senha'];
         }

@@ -7,6 +7,7 @@ class UserController
     /** @var array Defines the columns names for the user table */
     private const USER_COLUMNS = [
         "id",
+        "max(id)",
         "nome",
         "login",
         "idade",
@@ -19,6 +20,39 @@ class UserController
     {
     }
 
+    /**
+     * @param $userData array
+     * @return array Returns the last inserted row int the database
+     */
+    public function createNewUser($userData)
+    {
+        $user = new User($userData);
+
+        $query = "CALL sp_usuarios_insert(:NAME, :LOGIN, :AGE, :SEX, :MAIL, :PASSWORD)";
+
+        $userDao = new UserDAO();
+        $result = $userDao->select
+        (
+            $query,
+            [
+                ':NAME' => $user->getName(),
+                ':LOGIN' => $user->getLogin(),
+                ':AGE' => $user->getAge(),
+                ':SEX' => $user->getSex(),
+                ':MAIL' => $user->getMail(),
+                ':PASSWORD' => $user->getPassword()
+            ]
+        );
+
+        foreach ($result as $newUser){
+
+            if ($newUser) {
+                $users[] = new User($newUser);
+            }
+        }
+
+        return $users;
+    }
     /**
      * Searches for all the columns of the user table
      *
@@ -131,18 +165,21 @@ class UserController
         }
 
         $iterator = 1;
-        $query .= "FROM usuarios ";
+        $query .= " FROM usuarios ";
 
-        foreach ($options['where'] as $columnName => $searchValue) {
-            if (in_array($columnName, self::USER_COLUMNS)) {
-                if ($iterator == 1) {
-                    $query .= "WHERE {$columnName} = '{$searchValue}' ";
-                } else {
-                    $query .= " AND {$columnName} = '{$searchValue}'";
+        if (isset($options['where'])) {
+            foreach ($options['where'] as $columnName => $searchValue) {
+                if (in_array($columnName, self::USER_COLUMNS)) {
+                    if ($iterator == 1) {
+                        $query .= "WHERE {$columnName} = '{$searchValue}' ";
+                    } else {
+                        $query .= " AND {$columnName} = '{$searchValue}'";
+                    }
+                    $iterator = 2;
                 }
-                $iterator = 2;
             }
         }
+
         return $query;
     }
 }
