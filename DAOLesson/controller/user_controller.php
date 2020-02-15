@@ -108,7 +108,7 @@ class UserController
             }
         }
 
-        return $user;
+        return !isset($user) ? null : $user;
     }
 
     /**
@@ -219,6 +219,8 @@ class UserController
                     $iterator = 2;
                 }
             }
+        } else if(isset($options['type']) && $options['type'] == 'delete') {
+            $query .= "";
         } else {
             $query .= "* ";
         }

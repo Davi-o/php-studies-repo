@@ -158,4 +158,31 @@ class testUser extends TestCase
 
         $this->assertEquals($expectedUser, UserController::findUserById(10));
     }
+
+    /**
+     * Tests if the delete method works properly
+     * @test
+     */
+    public function givenLastUserIdWhenDeletesThenReturnsNull()
+    {
+        $lastId = UserController::search(
+            [
+                'columns' => [
+                    'max(id) as id'
+                ]
+            ]
+        );
+
+        $options = [
+            'where' => [
+                'id' => $lastId[0]->getId()
+            ]
+        ];
+
+        $userController = new UserController();
+        $userController->deleteUser($options);
+
+        $this->assertNull(UserController::findUserById(14));
+    }
+
 }
