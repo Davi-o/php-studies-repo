@@ -19,12 +19,12 @@ class User
     {
         if ($userData) {
             $this->id = !isset($userData['id']) ?: $userData['id'];
-            $this->name = $userData['nome'];
-            $this->login = $userData['login'];
-            $this->age = $userData['idade'];
-            $this->sex = $userData['sexo'];
-            $this->mail = $userData['email'];
-            $this->password = $userData['senha'];
+            $this->name = !isset($userData['nome']) ?: $userData['nome'];
+            $this->login = !isset($userData['login']) ?: $userData['login'];
+            $this->age = !isset($userData['idade']) ?: $userData['idade'];
+            $this->sex = !isset($userData['sexo']) ?: $userData['sexo'];
+            $this->mail = !isset($userData['email']) ?: $userData['email'];
+            $this->password = !isset($userData['senha']) ?: $userData['senha'];
         }
     }
 

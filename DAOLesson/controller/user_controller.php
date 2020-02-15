@@ -7,7 +7,7 @@ class UserController
     /** @var array Defines the columns names for the user table */
     private const USER_COLUMNS = [
         "id",
-        "max(id)",
+        "max(id) as id",
         "nome",
         "login",
         "idade",
@@ -18,8 +18,8 @@ class UserController
 
     /** @var array Defines the basics commands for the queries */
     private const SQL_DML_COMMANDS = [
-        'UPDATE',
-        'DELETE'
+        'update',
+        'delete'
     ];
 
     public function __construct()
@@ -128,10 +128,10 @@ class UserController
         foreach ($result as $userData){
 
             if ($userData) {
-                $user[] = new User($userData);
+                $users[] = new User($userData);
             }
         }
-        return $user;
+        return $users;
     }
 
     /**
@@ -166,10 +166,7 @@ class UserController
 
         if (
             isset($options['type'])
-            && in_array(
-                $options['type'],
-                array_map("strtolower",self::SQL_DML_COMMANDS)
-            )
+            && in_array($options['type'], self::SQL_DML_COMMANDS)
         ) {
             switch ($options['type']){
                 case $options['type'] == "delete" && isset($options['where']):
@@ -187,15 +184,36 @@ class UserController
             $iterator = 1;
 
             foreach ($options['columns'] as $columnName => $columnValue) {
-                if (in_array($columnName, self::USER_COLUMNS)) {
+                if (
+                    in_array($columnValue, self::USER_COLUMNS)
+                    || (isset($options['type']) && in_array($columnName, self::USER_COLUMNS))
+                ) {
                     if ($iterator == 1) {
-                        $query .= ($options['type'] == 'update') ? "{$columnName} = '{$columnValue}'" : "{$columnName}";
+                        $query .=
+                            (
+                                isset($options['type'])
+                                && $options['type'] == 'update'
+                            )
+                            ? "{$columnName} = '{$columnValue}'"
+                            : "{$columnValue}";
 
                     } elseif ($columnName == array_key_last($options['columns'])) {
-                        $query .= ($options['type'] == 'update') ? ", {$columnName} = '{$columnValue}' " : ", {$columnName} ";
+                        $query .=
+                            (
+                                isset($options['type'])
+                                && $options['type'] == 'update'
+                            )
+                            ? ", {$columnName} = '{$columnValue}' "
+                            : ", {$columnValue} ";
 
                     } else {
-                        $query .= ($options['type'] == 'update') ? ", {$columnName} = '{$columnValue}'" : ", {$columnName},";
+                        $query .=
+                            (
+                                isset($options['type'])
+                                && $options['type'] == 'update'
+                            )
+                            ? ", {$columnName} = '{$columnValue}'"
+                            : ", {$columnValue}";
 
                     }
                     $iterator = 2;

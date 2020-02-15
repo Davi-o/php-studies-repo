@@ -5,7 +5,7 @@ require_once "../model/user.class.php";
 require_once "../controller/user_controller.php";
 
 use PHPUnit\Framework\TestCase;
-class testConnection extends TestCase
+class testUser extends TestCase
 {
     /**
      * Tests if the database connection is working properly
@@ -95,7 +95,7 @@ class testConnection extends TestCase
         $userData = [
             "nome" => "Marcelinho Vidal",
             "login" => "vidal",
-            "idade" => 20,
+            "idade" => '20',
             "sexo" => "mas",
             "email" => "vidal@mail.com",
             "senha" => "1641"
@@ -104,12 +104,12 @@ class testConnection extends TestCase
         $newId = UserController::search(
             [
                 'columns' => [
-                    'max(id)'
+                    'max(id) as id'
                 ]
             ]
         );
 
-        $newId = $newId[0]['max(id)'] + 1;
+        $newId = $newId[0]->getId() + 1;
 
         $expectedUser[] = new User(
             $userData += [
