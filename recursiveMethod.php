@@ -39,7 +39,7 @@ $hierarchy[] = [
     ]
 ];
 
-function showRoles(array $roles): String
+function showRoles(array $roles): string
 {
 
     $html = "<ul>";
