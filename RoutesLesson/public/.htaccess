@@ -1,0 +1,8 @@
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^(.*)\.(swf|png|jpg|bmp|jpeg|css|gif|ttf|ico|txt|eot|svg|xml)|/undefined
+	RewriteCond %{REQUEST_URI} !^/(skins|media|skin|css|imagens|img|icons|chat)/
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+</IfModule>
